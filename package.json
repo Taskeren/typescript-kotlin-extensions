@@ -26,6 +26,11 @@
 	"author": "Taskeren <r0yalist@outlook.com>",
 	"license": "MIT",
 	"type": "commonjs",
+	"homepage": "https://github.com/taskeren/typescript-kotlin-extensions",
+	"repository": "github:taskeren/typescript-kotlin-extensions",
+	"bugs": {
+		"url": "https://github.com/taskeren/typescript-kotlin-extensions/issues"
+	},
 	"files": [
 		"lib/**/*"
 	],
