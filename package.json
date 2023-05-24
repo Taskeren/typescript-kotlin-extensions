@@ -16,7 +16,10 @@
 	"jest": {
 		"transform": {
 			"^.+\\.[t|j]sx?$": "ts-jest"
-		}
+		},
+		"modulePathIgnorePatterns": [
+			"<rootDir>/lib/"
+		]
 	},
 	"keywords": [
 		"typescript",
