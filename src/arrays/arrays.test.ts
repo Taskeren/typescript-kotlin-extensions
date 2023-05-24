@@ -268,19 +268,88 @@ describe("Arrays", () => {
 		])
 	})
 
-    test("reverseRange", () => {
-        const arr = [1, 2, 3, 4, 5]
-        arr.reverseRange(0, 4)
-        expect(arr).toEqual([4, 3, 2, 1, 5])
-    })
+	test("reverseRange", () => {
+		const arr = [1, 2, 3, 4, 5]
+		arr.reverseRange(0, 4)
+		expect(arr).toEqual([4, 3, 2, 1, 5])
+	})
 
-    test("reversed", () => {
-        const arr = [1,2,3,4,5]
-        expect(arr.reversed()).toEqual([5,4,3,2,1])
-        expect(arr.reversed()).not.toBe(arr)
-    })
+	test("reversed", () => {
+		const arr = [1, 2, 3, 4, 5]
+		expect(arr.reversed()).toEqual([5, 4, 3, 2, 1])
+		expect(arr.reversed()).not.toBe(arr)
+	})
 
-    test("shuffle", () => {
-        expect([1,2,3,4,5].shuffle()).not.toEqual([1,2,3,4,5])
-    })
+	test("shuffle", () => {
+		expect([1, 2, 3, 4, 5].shuffle()).not.toEqual([1, 2, 3, 4, 5])
+	})
+
+	test("sortBy", () => {
+		expect(
+			["1", "3", "2", "5", "4"].sortBy((str) => parseInt(str))
+		).toEqual(["1", "2", "3", "4", "5"])
+	})
+
+	test("sortByDescending", () => {
+		expect(
+			["1", "3", "2", "5", "4"].sortByDescending((str) => parseInt(str))
+		).toEqual(["5", "4", "3", "2", "1"])
+	})
+
+	test("sorted", () => {
+		const originArr = [1, 3, 2, 5, 4]
+		const sortedArr = originArr.sorted()
+		expect(sortedArr).toEqual([1, 2, 3, 4, 5])
+		expect(sortedArr).not.toBe(originArr)
+	})
+
+	test("sortedBy", () => {
+		const originArr = ["1", "3", "2", "5", "4"]
+		const sortedArr = originArr.sortedBy((str) => parseInt(str))
+		expect(sortedArr).toEqual(["1", "2", "3", "4", "5"])
+		expect(sortedArr).not.toBe(originArr)
+	})
+
+	test("sortedByDescending", () => {
+		const originArr = ["1", "3", "2", "5", "4"]
+		const sortedArr = originArr.sortedByDescending((str) => parseInt(str))
+		expect(sortedArr).toEqual(["5", "4", "3", "2", "1"])
+		expect(sortedArr).not.toBe(originArr)
+	})
+
+	test("sortedDescending", () => {
+		const originArr = [1, 3, 2, 5, 4]
+		const sortedArr = originArr.sortedDescending()
+		expect(sortedArr).toEqual([5, 4, 3, 2, 1])
+		expect(sortedArr).not.toBe(originArr)
+	})
+
+	test("copyInto", () => {
+		const arr = [1, 2, 3, 4, 5]
+		expect(arr.copyInto([0, 0, 0, 0, 0, 0], 0, 1, 3)).toEqual([2, 3, 0, 0, 0, 0])
+		expect(arr.copyInto([0, 0, 0, 0, 0, 0], 2, 1, 3)).toEqual([0, 0, 2, 3, 0, 0])
+	})
+
+	test("copyOf", () => {
+		const arr = [1, 2, 3, 4, 5]
+		const copy = arr.copyOf()
+		expect(copy).toEqual(arr)
+		expect(copy).not.toBe(arr)
+	})
+
+	test("copyOfRange", () => {
+		const arr = [1, 2, 3, 4, 5]
+		const copy = arr.copyOfRange(0, 3)
+		expect(copy).toEqual([1, 2, 3])
+		expect(copy).not.toBe(arr)
+	})
+
+	test("sort", () => {
+		expect([1, 3, 2, 5, 4].sort()).toEqual([1, 2, 3, 4, 5])
+		expect([1, 3, 2, 5, 4, 10].sort()).toEqual([1, 2, 3, 4, 5, 10])
+	})
+
+	test("sortWith", () => {
+		expect([1, 3, 2, 5, 4].sortWith(() => 1)).toEqual([1, 3, 2, 5, 4])
+	})
 })

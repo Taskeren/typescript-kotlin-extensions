@@ -1,5 +1,7 @@
 import { Random } from "random-js"
 import "../kotlin-extensions"
+import { TODO } from "../utils/todo"
+import { Comparable, Comparator, NaturalOrder, ReverseOrder, compareBy, compareByDescending, getReversedComparator } from "../utils/comparable"
 
 const DefaultRandom = new Random()
 
@@ -299,18 +301,98 @@ Array.prototype.reversed = function () {
 	return [...this].reverse()
 }
 Array.prototype.shuffle = function (rand = DefaultRandom) {
-	for(let i = this.length - 1; i >= 1; i--) {
+	for (let i = this.length - 1; i >= 1; i--) {
 		let j = rand.integer(0, i + 1)
 		let tmp = this.at(i)
 		this[i] = this[j]
 		this[j] = tmp
 	}
 }
+Array.prototype.sortBy = function (selector) {
+	if (this.length > 1) this.sortWith(compareBy(selector))
+	return this
+}
+Array.prototype.sortByDescending = function (selector) {
+	if (this.length > 1) this.sortWith(compareByDescending(selector))
+	return this
+}
+Array.prototype.sorted = function () {
+	if (this.length == 0) return this
+	return this.copyOf().sort()
+}
+Array.prototype.sortedBy = function (selector) {
+	return this.sortedWith(compareBy(selector))
+}
+Array.prototype.sortedByDescending = function (selector) {
+	return this.sortedWith(compareByDescending(selector))
+}
+Array.prototype.sortedDescending = function () {
+	return this.sortedWith(ReverseOrder())
+}
+Array.prototype.sortedWith = function (comparator) {
+	if (this.length == 0) return this
+	let copy = this.copyOf()
+	copy.sortWith(comparator)
+	return copy
+}
 
+Array.prototype.copyInto = function (destination, offset = 0, startIndex = 0, endIndex = this.length) {
+	for(let i = 0; i < endIndex - startIndex; i ++) {
+		destination[i + offset] = this[i + startIndex]
+	}
+	return destination
+}
+Array.prototype.copyOf = function (size) {
+	if (size === undefined) {
+		return [...this]
+	} else {
+		let array = new Array(size)
+		for (let i = 0; i < size; i++) array[i] = this.at(i)
+		return array
+	}
+}
 Array.prototype.copyOfRange = function (start, end) {
 	let result = []
 	for (let i = start; i < end; i++) result.push(this.at(i))
 	return result
+}
+
+// capture the original sorter
+let originSort = Array.prototype.sort
+Array.prototype.sort = function (comparator) {
+	// change the comparator logic if it is not provided.
+	// this can fix the sorting problem in TS, but may broke some scripts.
+	// You can disable this feature later.
+	// TODO: Add feature to disable this
+	if (comparator === undefined) {
+		comparator = NaturalOrder()
+	}
+	return originSort.call(this, comparator)
+}
+Array.prototype.sortDescending = function (comparator, fromIndex = 0, toIndex = this.length) {
+	// reverse the comparator
+	if(comparator === undefined) {
+		comparator = ReverseOrder()
+	} else {
+		comparator = getReversedComparator(comparator)
+	}
+	return this.sortWith(comparator, fromIndex, toIndex)
+}
+Array.prototype.sortWith = function(comparator, fromIndex = 0, toIndex = this.length) {
+	if (comparator === undefined) {
+		comparator = NaturalOrder()
+	}
+	if(fromIndex == 0 && toIndex == this.length) {
+		return originSort.call(this, comparator)
+	}
+
+	// ranged sort
+	let copyRange = this.copyOfRange(fromIndex, toIndex)
+	copyRange.sortWith(comparator)
+	for(let i = fromIndex; i < toIndex; i++) {
+		this[i] = copyRange.at(i)
+	}
+	return this
 }
 
 export {}
