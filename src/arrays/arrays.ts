@@ -298,7 +298,7 @@ Array.prototype.reverseRange = function (fromIndex, toIndex) {
 	}
 }
 Array.prototype.reversed = function () {
-	return [...this].reverse()
+	return this.copyOf().reverse()
 }
 Array.prototype.shuffle = function (rand = DefaultRandom) {
 	for (let i = this.length - 1; i >= 1; i--) {
