@@ -1,6 +1,6 @@
 {
 	"name": "typescript-kotlin-extensions",
-	"version": "0.0.2",
+	"version": "0.0.3",
 	"description": "An extension library for Kotlin.",
 	"main": "lib/kotlin-extensions.ts",
 	"types": "lib/kotlin-extensions.d.ts",
