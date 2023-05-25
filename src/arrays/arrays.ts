@@ -335,7 +335,20 @@ Array.prototype.sortedWith = function (comparator) {
 	copy.sortWith(comparator)
 	return copy
 }
-
+Array.prototype.contentDeepEquals = function (array) {
+	if(this.length != array.length) return false
+	for (let i = 0; i < this.length; i++) {
+		if (this.at(i) !== array.at(i)) return false
+	}
+	return true
+}
+Array.prototype.contentEquals = function (array) {
+	if(this.length != array.length) return false
+	for (let i = 0; i < this.length; i++) {
+		if (this.at(i) != array.at(i)) return false
+	}
+	return true
+}
 Array.prototype.copyInto = function (destination, offset = 0, startIndex = 0, endIndex = this.length) {
 	for(let i = 0; i < endIndex - startIndex; i ++) {
 		destination[i + offset] = this[i + startIndex]
@@ -356,7 +369,19 @@ Array.prototype.copyOfRange = function (start, end) {
 	for (let i = start; i < end; i++) result.push(this.at(i))
 	return result
 }
-
+Array.prototype.fill = function (value, start = 0, end = this.length) {
+	for (let i = start; i < end; i++) this[i] = value
+	return this
+}
+Array.prototype.isEmpty = function () {
+	return this.length == 0
+}
+Array.prototype.isNotEmpty = function () {
+	return this.length > 0
+}
+Array.prototype.lastIndex = function () {
+	return this.length - 1
+}
 // capture the original sorter
 let originSort = Array.prototype.sort
 Array.prototype.sort = function (comparator) {
@@ -394,7 +419,34 @@ Array.prototype.sortWith = function(comparator, fromIndex = 0, toIndex = this.le
 	}
 	return this
 }
-
+Array.prototype.associate = function (transform) {
+	return this.associateTo(new Map(), transform)
+}
+Array.prototype.associateBy = function (keySelector) {
+	return this.associateByTo(new Map(), keySelector)
+}
+Array.prototype.associateByTo = function (destination, keySelector) {
+	for(let el of this) {
+		destination.set(keySelector(el), el)
+	}
+	return destination
+}
+Array.prototype.associateTo = function (destination, transform) {
+	for(let el of this) {
+		let [key, value] = transform(el)
+		destination.set(key, value)
+	}
+	return destination
+}
+Array.prototype.associateWith = function (transform) {
+	return this.associateWithTo(new Map(), transform)
+}
+Array.prototype.associateWithTo = function (destination, transform) {
+	for(let el of this) {
+		destination.set(el, transform(el))
+	}
+	return destination
+}
 export {}
 
 // helpers

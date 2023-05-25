@@ -1,4 +1,5 @@
-import "./arrays"
+import "../kotlin-extensions"
+import { createMap } from "../utils/fast-map"
 
 describe("Arrays", () => {
 	const TransformResult1 = "Yes!"
@@ -324,10 +325,24 @@ describe("Arrays", () => {
 		expect(sortedArr).not.toBe(originArr)
 	})
 
+	test("contentDeepEquals", () => {
+		expect([1, 2, 3, 4, 5].contentDeepEquals([1, 2, 3, 4, 5])).toBe(true)
+		expect([NaN, [], 0].contentDeepEquals([NaN, 0, []])).not.toBe(true)
+	})
+
+	test("contentEquals", () => {
+		expect([1, 2, 3, 4, 5].contentEquals([1, 2, 3, 4, 5])).toBe(true)
+		expect(([0] as Array<any>).contentEquals(["0"])).toBe(true)
+	})
+
 	test("copyInto", () => {
 		const arr = [1, 2, 3, 4, 5]
-		expect(arr.copyInto([0, 0, 0, 0, 0, 0], 0, 1, 3)).toEqual([2, 3, 0, 0, 0, 0])
-		expect(arr.copyInto([0, 0, 0, 0, 0, 0], 2, 1, 3)).toEqual([0, 0, 2, 3, 0, 0])
+		expect(arr.copyInto([0, 0, 0, 0, 0, 0], 0, 1, 3)).toEqual([
+			2, 3, 0, 0, 0, 0,
+		])
+		expect(arr.copyInto([0, 0, 0, 0, 0, 0], 2, 1, 3)).toEqual([
+			0, 0, 2, 3, 0, 0,
+		])
 	})
 
 	test("copyOf", () => {
@@ -344,6 +359,25 @@ describe("Arrays", () => {
 		expect(copy).not.toBe(arr)
 	})
 
+	test("fill", () => {
+		expect([1, 2, 3, 4, 5].fill(0)).toEqual([0, 0, 0, 0, 0])
+		expect([1, 2, 3, 4, 5].fill(0, 0, 3)).toEqual([0, 0, 0, 4, 5])
+	})
+
+	test("isEmpty", () => {
+		expect([1, 2, 3, 4, 5].isEmpty()).toBe(false)
+		expect([].isEmpty()).toBe(true)
+	})
+
+	test("isNotEmpty", () => {
+		expect([1, 2, 3, 4, 5].isNotEmpty()).toBe(true)
+		expect([].isNotEmpty()).toBe(false)
+	})
+
+	test("lastIndex", () => {
+		expect([1, 2, 3, 4, 5].lastIndex()).toBe(4)
+	})
+
 	test("sort", () => {
 		expect([1, 3, 2, 5, 4].sort()).toEqual([1, 2, 3, 4, 5])
 		expect([1, 3, 2, 5, 4, 10].sort()).toEqual([1, 2, 3, 4, 5, 10])
@@ -351,5 +385,47 @@ describe("Arrays", () => {
 
 	test("sortWith", () => {
 		expect([1, 3, 2, 5, 4].sortWith(() => 1)).toEqual([1, 3, 2, 5, 4])
+	})
+
+	test("associate", () => {
+		expect([1, 2, 3, 4, 5].associate((el) => [el * 2, el * 4])).toEqual(
+			new Map([1, 2, 3, 4, 5].map((el) => [el * 2, el * 4]))
+		)
+	})
+
+	test("associateBy", () => {
+		expect([1, 2, 3, 4, 5].associateBy((el) => el * 2)).toEqual(
+			new Map([1, 2, 3, 4, 5].map((el) => [el * 2, el]))
+		)
+	})
+
+	test("associateByTo", () => {
+		const map = new Map()
+		expect([1, 2, 3, 4, 5].associateByTo(map, (el) => el * 2)).toEqual(
+			new Map([1, 2, 3, 4, 5].map((el) => [el * 2, el]))
+		)
+		expect([1, 2, 3, 4, 5].associateByTo(map, (el) => el * 2)).toBe(map)
+	})
+
+	test("associateTo", () => {
+		const map = new Map()
+		expect([1, 2, 3, 4, 5].associateTo(map, (el) => [el * 2, el * 4])).toEqual(
+			new Map([1, 2, 3, 4, 5].map((el) => [el * 2, el * 4]))
+		)
+		expect([1, 2, 3, 4, 5].associateTo(map, (el) => [el * 2, el * 4])).toBe(map)
+	})
+
+	test("associateWith", () => {
+		expect([1, 2, 3, 4, 5].associateWith((el) => el * 2)).toEqual(
+			new Map([1, 2, 3, 4, 5].map((el) => [el, el * 2]))
+		)
+	})
+
+	test("associateWithTo", () => {
+		const map = new Map()
+		expect([1, 2, 3, 4, 5].associateWithTo(map, (el) => el * 2)).toEqual(
+			new Map([1, 2, 3, 4, 5].map((el) => [el, el * 2]))
+		)
+		expect([1, 2, 3, 4, 5].associateWithTo(map, (el) => el * 2)).toBe(map)
 	})
 })

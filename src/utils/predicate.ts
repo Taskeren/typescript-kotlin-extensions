@@ -1,5 +1,6 @@
-export interface Predicate<T> {
-    (): boolean
-}
+export type Predicate<T> = (what: T) => boolean
 
-export type PredicateLike<T> = Predicate<T> | ((what: T) => boolean)
+/**
+ * @deprecated Use `Predicate<T>` instead
+ */
+export type PredicateLike<T> = ((what: T) => boolean)
