@@ -1,5 +1,4 @@
 import "../kotlin-extensions"
-import { createMap } from "../utils/fast-map"
 
 describe("Arrays", () => {
 	const TransformResult1 = "Yes!"
