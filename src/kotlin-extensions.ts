@@ -3,6 +3,7 @@ import { Comparable, Comparator } from "./utils/comparable"
 import { Predicate } from "./utils/predicate"
 import { Transform, TransformComparable } from "./utils/transform"
 import { Pair } from "./utils/pair"
+import { Grouping } from "./utils/grouping"
 
 export * from "./arrays/arrays"
 export * from "./utils/comparable"
@@ -65,7 +66,7 @@ declare global {
 		reverseRange(fromIndex: number, toIndex: number): void
 		reversed(): Array<T>
 		// reversedArray: skipped because there is no difference between reversed and reversedArray
-		shuffle(random?: Random): void
+		shuffle(random?: Random): this
 		sortBy<R extends Comparable<R>>(
 			selector: TransformComparable<T, R>
 		): this
@@ -107,7 +108,7 @@ declare global {
 		 */
 		sort(comparator?: Comparator<T>): this
         sortDescending(comparator?: Comparator<T>, fromIndex?: number, toIndex?: number): this
-        sortWith(comparator: Comparator<T>, fromIndex?: number, toIndex?: number): void
+        sortWith(comparator: Comparator<T>, fromIndex?: number, toIndex?: number): this
 		// toBooleanArray, toByteArray, toCharArray, toDoubleArray, toFloatArray, toIntArray, toLongArray, toShortArray, toTypedArray: skipped
 		associate<K, V>(transform: Transform<T, Pair<K, V>>): Map<K, V>
 		associateBy<K, V>(keySelector: Transform<T, K>): Map<K, V>
@@ -115,6 +116,29 @@ declare global {
 		associateTo<K, V>(destination: Map<K, V>, transform: Transform<T, Pair<K, V>>): Map<K, V>
 		associateWith<K, V>(valueTransform: Transform<T, V>): Map<K, V>
 		associateWithTo<K, V>(destination: Map<K, V>, valueTransform: Transform<T, V>): Map<K, V>
+		// toCollection: skipped
+		// toHashSet: skipped
+		// toList: skipped
+		// toMutableList: skipped
+		toSet(): Set<T>
+		// flatMap: in JS std
+		// flatMapIndexed: in JS std, use flatMap
+		flatMapTo<R, C extends Array<R>>(destination: C, transform: Transform<T, Iterable<R>>): Array<T>
+		groupBy<K, V = T>(keySelector: Transform<T, K>, valueSelector?: Transform<T, V>): Map<K, Array<V>>
+		groupByTo<M extends Map<K, Array<T>>, K, V = T>(destination: M, keySelector: Transform<T, K>, valueSelector?: Transform<T, V>): M
+		groupingBy<K>(keySelector: Transform<T, K>): Grouping<T, K>
+		// map: skipped
+		// mapIndexed: skipped
+		mapNotNull<R>(transform?: Transform<T, R | null>): Array<R>
+		mapNotNullTo<R, C extends Array<R>>(destination: C, transform?: Transform<T, R | null>): C
+		mapTo<R, C extends Array<R>>(destination: C, transform: Transform<T, R>): C
+		withIndex(): Array<[number, T]>
+		distinct(): Array<T>
+		distinctBy<K>(selector: Transform<T, K>): Array<T>
+		intersect(other: Iterable<T>): Set<T>
+		subtract(other: Iterable<T>): Set<T>
+		// toMutableSet: skipped
+		union(other: Iterable<T>): Set<T>
 
 		/* added by kotlin-extensions: inspired from `firstNotNullOf` and `firstNotNullOfOrNull` */
 		firstTruthyOf<R>(transform: Transform<T, R>): R | undefined
@@ -122,7 +146,8 @@ declare global {
 		/* end */
 	}
 
-	interface Number extends Comparable<Number> {
+	interface Number {
+		compareTo(other: number): number
 		coerceAtLeast(minimumValue: number): number
 		coerceAtMost(maximumValue: number): number
 		coerceIn(minimumValue: number, maximumValue: number): number

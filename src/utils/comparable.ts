@@ -39,12 +39,21 @@ export function compareValuesBy<T>(
 }
 
 export function compareValues<T extends Comparable<unknown>>(
-	a: T | null,
-	b: T | null
+	x: T | null,
+	y: T | null
 ): number {
-	if (a === b) return 0
-	if (a == null) return -1
-	if (b == null) return 1
+	if (x === y) return 0
+	if (x == null) return -1
+	if (y == null) return 1
 
-	return a.compareTo(b)
+	return x.compareTo(y)
+}
+
+export type ComparableType<T> = T & Comparable<T>
+
+export function makeComparable(origin: number): ComparableType<number> {
+	Object.getPrototypeOf(origin).compareTo = function(other) {
+		return this === other ? 0 : this > other ? 1 : -1
+	}
+	return origin as ComparableType<number>
 }

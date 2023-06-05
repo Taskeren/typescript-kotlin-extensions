@@ -1,4 +1,5 @@
 import "../kotlin-extensions"
+import "../numbers/numbers"
 
 describe("Arrays", () => {
 	const TransformResult1 = "Yes!"
@@ -408,10 +409,12 @@ describe("Arrays", () => {
 
 	test("associateTo", () => {
 		const map = new Map()
-		expect([1, 2, 3, 4, 5].associateTo(map, (el) => [el * 2, el * 4])).toEqual(
-			new Map([1, 2, 3, 4, 5].map((el) => [el * 2, el * 4]))
+		expect(
+			[1, 2, 3, 4, 5].associateTo(map, (el) => [el * 2, el * 4])
+		).toEqual(new Map([1, 2, 3, 4, 5].map((el) => [el * 2, el * 4])))
+		expect([1, 2, 3, 4, 5].associateTo(map, (el) => [el * 2, el * 4])).toBe(
+			map
 		)
-		expect([1, 2, 3, 4, 5].associateTo(map, (el) => [el * 2, el * 4])).toBe(map)
 	})
 
 	test("associateWith", () => {
@@ -426,5 +429,94 @@ describe("Arrays", () => {
 			new Map([1, 2, 3, 4, 5].map((el) => [el, el * 2]))
 		)
 		expect([1, 2, 3, 4, 5].associateWithTo(map, (el) => el * 2)).toBe(map)
+	})
+
+	test("flatMapTo", () => {
+		expect([1, 2, 3, 4, 5].flatMapTo([], (el) => [el * 2, el * 4])).toEqual(
+			[2, 4, 4, 8, 6, 12, 8, 16, 10, 20]
+		)
+	})
+
+	test("groupBy (keySelector only)", () => {
+		expect(
+			["a", "abc", "ab", "def", "abcd"].groupBy((el) => el.length)
+		).toEqual(
+			new Map<number, string[]>([
+				[1, ["a"]],
+				[2, ["ab"]],
+				[3, ["abc", "def"]],
+				[4, ["abcd"]],
+			])
+		)
+	})
+
+	test("groupBy (keySelector and valueSelector)", () => {
+		expect(
+			[
+				["Alice", "Marketing"],
+				["Bob", "Sales"],
+				["Carol", "Marketing"],
+			].groupBy(
+				(el) => el[1],
+				(el) => el[0]
+			)
+		).toEqual(
+			new Map([
+				["Marketing", ["Alice", "Carol"]],
+				["Sales", ["Bob"]],
+			])
+		)
+	})
+
+	// no need to test groupByTo, because groupBy is depends on the groupByTo.
+
+	test("groupingBy", () => {
+		expect("one two three four five six seven eight nine ten".split(" ").groupingBy(x => x[0]).eachCount()).toEqual(new Map([
+			["o", 1],
+			["t", 3],
+			["f", 2],
+			["s", 2],
+			["e", 1],
+			["n", 1],
+		]))
+	})
+
+	test("mapNotNull", () => {
+		expect([1, null, 2].mapNotNull()).toEqual([1, 2])
+		expect([1, null, 2].mapNotNull(x => x != 2 ? x : null)).toEqual([1])
+	})
+
+	test("mapTo", () => {
+		expect([1, 2, 3, 4, 5].mapTo([], x => x * 2)).toEqual([2, 4, 6, 8, 10])
+	})
+
+	test("withIndex", () => {
+		expect([1, 2, 3, 4, 5].withIndex()).toEqual([
+			[0, 1],
+			[1, 2],
+			[2, 3],
+			[3, 4],
+			[4, 5],
+		])
+	})
+
+	test("distinct", () => {
+		expect([1, 1, 2, 2, 3, 3, 4, 4, 5, 5].distinct()).toEqual([1, 2, 3, 4, 5])
+	})
+
+	test("distinctBy", () => {
+		expect([1, 1, 2, 2, 3, 3, 4, 4, 5, 5].distinctBy((x => x + 1))).toEqual([1, 2, 3, 4, 5])
+	})
+
+	test("intersect", () => {
+		expect([1, 2, 3, 4, 5].intersect([4, 5, 6, 7, 8])).toEqual(new Set([1, 2, 3, 4, 5, 6, 7, 8]))
+	})
+
+	test("subtract", () => {
+		expect([1, 2, 3, 4, 5].subtract([1, 2, 3])).toEqual(new Set([4, 5]))
+	})
+
+	test("union", () => {
+		expect([1, 3, 5, 7].union([2, 4, 6, 8])).toEqual(new Set([1, 2, 3, 4, 5, 6, 7, 8]))
 	})
 })

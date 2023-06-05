@@ -1,137 +1,137 @@
 import { Random } from "random-js"
 import "../kotlin-extensions"
-import { TODO } from "../utils/todo"
-import { Comparable, Comparator, NaturalOrder, ReverseOrder, compareBy, compareByDescending, getReversedComparator } from "../utils/comparable"
+import { compareBy, compareByDescending, getReversedComparator, NaturalOrder, ReverseOrder } from "../utils/comparable"
+import { Grouping } from "../utils/grouping"
 
 const DefaultRandom = new Random()
 
 Array.prototype.contains = Array.prototype.includes
 Array.prototype.elementAt = Array.prototype.at
-Array.prototype.elementAtOrElse = function (index, defaultValue) {
+Array.prototype.elementAtOrElse = function(index, defaultValue) {
 	return isInBound(this, index) ? this.elementAt(index) : defaultValue(index)
 }
-Array.prototype.elementAtOrNull = function (index) {
+Array.prototype.elementAtOrNull = function(index) {
 	return isInBound(this, index) ? this.elementAt(index) : null
 }
-Array.prototype.find = function (predicate) {
+Array.prototype.find = function(predicate) {
 	return this.firstOrNull(predicate) || undefined // covert to undefined, as the return type is T | undefined
 }
-Array.prototype.findLast = function (predicate) {
+Array.prototype.findLast = function(predicate) {
 	return this.lastOrNull(predicate) || undefined // covert to undefined, as the return type is T | undefined
 }
-Array.prototype.first = function (predicate) {
+Array.prototype.first = function(predicate) {
 	return predicate === undefined
 		? this.at(0)
 		: this.firstOrNull(predicate) || undefined
 }
-Array.prototype.last = function (predicate) {
+Array.prototype.last = function(predicate) {
 	return predicate === undefined
 		? this.at(this.length - 1)
 		: this.lastOrNull(predicate) || undefined
 }
-Array.prototype.firstNotNullOf = function (transform) {
+Array.prototype.firstNotNullOf = function(transform) {
 	let result = this.firstNotNullOfOrNull(transform)
 	return result || undefined
 }
-Array.prototype.firstNotNullOfOrNull = function (transform) {
-	for (let el of this) {
+Array.prototype.firstNotNullOfOrNull = function(transform) {
+	for(let el of this) {
 		let result = transform(el)
-		if (result !== null) {
+		if(result !== null) {
 			return result
 		}
 	}
 	return null
 }
-Array.prototype.firstTruthyOf = function (transform) {
+Array.prototype.firstTruthyOf = function(transform) {
 	let result = this.firstTruthyOfOrNull(transform)
 	return result || undefined
 }
-Array.prototype.firstTruthyOfOrNull = function (transform) {
-	for (let el of this) {
+Array.prototype.firstTruthyOfOrNull = function(transform) {
+	for(let el of this) {
 		let result = transform(el)
-		if (result) {
+		if(result) {
 			return result
 		}
 	}
 	return null
 }
-Array.prototype.firstOrNull = function (predicate) {
-	if (predicate === undefined) {
+Array.prototype.firstOrNull = function(predicate) {
+	if(predicate === undefined) {
 		return this.at(0) || null
 	}
-	for (let el of this) if (predicate(el)) return el
+	for(let el of this) if(predicate(el)) return el
 	return null
 }
-Array.prototype.getOrElse = function (index, defaultValue) {
+Array.prototype.getOrElse = function(index, defaultValue) {
 	return isInBound(this, index) ? this.at(index) : defaultValue(index)
 }
-Array.prototype.getOrNull = function (index) {
+Array.prototype.getOrNull = function(index) {
 	return isInBound(this, index) ? this.at(index) : null
 }
-Array.prototype.indexOf = function (element) {
-	if (element === null) {
-		for (let i = 0; i < this.length; i++) {
+Array.prototype.indexOf = function(element) {
+	if(element === null) {
+		for(let i = 0; i < this.length; i++) {
 			let el = this.at(i)
-			if (el === null) return i
+			if(el === null) return i
 		}
 	} else {
-		for (let i = 0; i < this.length; i++) {
+		for(let i = 0; i < this.length; i++) {
 			let el = this.at(i)
-			if (element === el) return i
+			if(element === el) return i
 		}
 	}
 	return -1
 }
-Array.prototype.indexOfFirst = function (predicate) {
-	for (let i = 0; i < this.length; i++) {
+Array.prototype.indexOfFirst = function(predicate) {
+	for(let i = 0; i < this.length; i++) {
 		let el = this.at(i)
-		if (predicate(el)) return i
+		if(predicate(el)) return i
 	}
 	return -1
 }
-Array.prototype.indexOfLast = function (predicate) {
-	for (let i = this.length - 1; i >= 0; i--) {
+Array.prototype.indexOfLast = function(predicate) {
+	for(let i = this.length - 1; i >= 0; i--) {
 		let el = this.at(i)
-		if (predicate(el)) return i
+		if(predicate(el)) return i
 	}
 	return -1
 }
-Array.prototype.lastIndexOf = function (element) {
-	if (element === null) {
-		for (let i = this.length - 1; i >= 0; i--) {
+Array.prototype.lastIndexOf = function(element) {
+	if(element === null) {
+		for(let i = this.length - 1; i >= 0; i--) {
 			let el = this.at(i)
-			if (el === null) return i
+			if(el === null) return i
 		}
 	} else {
-		for (let i = this.length - 1; i >= 0; i--) {
+		for(let i = this.length - 1; i >= 0; i--) {
 			let el = this.at(i)
-			if (element === el) return i
+			if(element === el) return i
 		}
 	}
 	return -1
 }
-Array.prototype.lastOrNull = function (predicate) {
-	if (predicate === undefined) {
+Array.prototype.lastOrNull = function(predicate) {
+	if(predicate === undefined) {
 		return this.at(this.length - 1) || null
 	}
 	// reverse loop
-	for (let i = this.length - 1; i >= 0; i--) {
+	for(let i = this.length - 1; i >= 0; i--) {
 		let el = this.at(i)
-		if (predicate(el)) return el
+		if(predicate(el)) return el
 	}
 	return null
 }
-Array.prototype.random = function (rand = DefaultRandom) {
+Array.prototype.random = function(rand = DefaultRandom) {
 	return this.length == 0 ? undefined : this[rand.integer(0, this.length - 1)]
 }
-Array.prototype.randomOrNull = function (rand = DefaultRandom) {
+Array.prototype.randomOrNull = function(rand = DefaultRandom) {
 	return this.length == 0 ? null : this[rand.integer(0, this.length - 1)]
 }
-Array.prototype.single = function (predicate) {
-	if (predicate === undefined) {
-		if (this.length == 1) {
+Array.prototype.single = function(predicate) {
+	if(predicate === undefined) {
+		if(this.length == 1) {
 			return this.at(0)
-		} else if (this.length == 0) {
+		} else if(this.length == 0) {
 			throw new Error("Array is empty.")
 		} else {
 			throw new Error("Array has more than one element.")
@@ -139,262 +139,263 @@ Array.prototype.single = function (predicate) {
 	} else {
 		let single = undefined
 		let found = false
-		for (let el of this) {
-			if (predicate(el)) {
-				if (found) {
+		for(let el of this) {
+			if(predicate(el)) {
+				if(found) {
 					throw new Error(
-						"Array contains more than one matching element."
+						"Array contains more than one matching element.",
 					)
 				}
 				single = el
 				found = true
 			}
 		}
-		if (!found) {
+		if(!found) {
 			throw new Error("Array contains no element matching the predicate.")
 		}
 		return single
 	}
 }
-Array.prototype.singleOrNull = function (predicate) {
-	if (predicate === undefined) {
+Array.prototype.singleOrNull = function(predicate) {
+	if(predicate === undefined) {
 		return this.length == 1 ? this.at(0) : null
 	} else {
 		let single = undefined
 		let found = false
-		for (let el of this) {
-			if (predicate(el)) {
-				if (found) {
+		for(let el of this) {
+			if(predicate(el)) {
+				if(found) {
 					return null
 				}
 				single = el
 				found = true
 			}
 		}
-		if (!found) return null
+		if(!found) return null
 		return single
 	}
 }
-Array.prototype.drop = function (n) {
-	if (n < 0)
-		throw new Error(`Requested element count ${n} is less than zero.`)
+Array.prototype.drop = function(n) {
+	if(n < 0)
+		throw new Error(`Requested element count ${ n } is less than zero.`)
 	return this.takeLast((this.length - n).coerceAtLeast(0))
 }
-Array.prototype.dropLast = function (n) {
-	if (n < 0)
-		throw new Error(`Requested element count ${n} is less than zero.`)
+Array.prototype.dropLast = function(n) {
+	if(n < 0)
+		throw new Error(`Requested element count ${ n } is less than zero.`)
 	return this.take((this.length - n).coerceAtLeast(0))
 }
-Array.prototype.dropLastWhile = function (predicate) {
-	for (let i = this.length - 1; i >= 0; i--) {
+Array.prototype.dropLastWhile = function(predicate) {
+	for(let i = this.length - 1; i >= 0; i--) {
 		let el = this.at(i)
-		if (!predicate(el)) {
+		if(!predicate(el)) {
 			return this.take(i + 1)
 		}
 	}
 	return []
 }
-Array.prototype.dropWhile = function (predicate) {
+Array.prototype.dropWhile = function(predicate) {
 	let yielding = false
 	let array = []
-	for (let item of this) {
-		if (yielding) {
+	for(let item of this) {
+		if(yielding) {
 			array.push(item)
-		} else if (!predicate(item)) {
+		} else if(!predicate(item)) {
 			array.push(item)
 			yielding = true
 		}
 	}
 	return array
 }
-Array.prototype.filterNot = function (predicate) {
+Array.prototype.filterNot = function(predicate) {
 	return this.filterNotTo([], predicate)
 }
-Array.prototype.filterNotNull = function () {
+Array.prototype.filterNotNull = function() {
 	return this.filterNotNullTo([])
 }
-Array.prototype.filterNotNullTo = function (destination) {
-	for (let el of this) if (el !== null) destination.push(el)
+Array.prototype.filterNotNullTo = function(destination) {
+	for(let el of this) if(el !== null) destination.push(el)
 	return destination
 }
-Array.prototype.filterNotTo = function (destination, predicate) {
-	for (let el of this) if (!predicate(el)) destination.push(el)
+Array.prototype.filterNotTo = function(destination, predicate) {
+	for(let el of this) if(!predicate(el)) destination.push(el)
 	return destination
 }
-Array.prototype.filterTo = function (destination, predicate) {
-	for (let el of this) if (predicate(el)) destination.push(el)
+Array.prototype.filterTo = function(destination, predicate) {
+	for(let el of this) if(predicate(el)) destination.push(el)
 	return destination
 }
-Array.prototype.slice = function (start, end) {
-	if (isIndicesEmpty(start, end)) return []
+Array.prototype.slice = function(start, end) {
+	if(isIndicesEmpty(start, end)) return []
 	return this.copyOfRange(start, end + 1)
 }
-Array.prototype.sliceIndices = function (indices) {
-	if (indices.length == 0) return []
+Array.prototype.sliceIndices = function(indices) {
+	if(indices.length == 0) return []
 	let array = []
-	for (let index of indices) {
-		if (isInBound(this, index)) {
+	for(let index of indices) {
+		if(isInBound(this, index)) {
 			array.push(this.at(index))
 		}
 	}
 	return array
 }
-Array.prototype.take = function (n) {
-	if (n < 0)
-		throw new Error(`Requested element count ${n} is less than zero.`)
+Array.prototype.take = function(n) {
+	if(n < 0)
+		throw new Error(`Requested element count ${ n } is less than zero.`)
 
-	if (n == 0) return []
-	if (n >= this.length) [...this]
-	if (n == 1) return [this.at(0)]
+	if(n == 0) return []
+	if(n >= this.length) [ ...this ]
+	if(n == 1) return [ this.at(0) ]
 
 	let count = 0
 	let array = []
-	for (let item of this) {
+	for(let item of this) {
 		array.push(item)
-		if (++count == n) break
+		if(++count == n) break
 	}
 	return array
 }
-Array.prototype.takeLast = function (n) {
-	if (n < 0)
-		throw new Error(`Requested element count ${n} is less than zero.`)
+Array.prototype.takeLast = function(n) {
+	if(n < 0)
+		throw new Error(`Requested element count ${ n } is less than zero.`)
 
-	if (n == 0) return []
-	if (n >= this.length) [...this]
-	if (n == 1) [this.at(this.length - 1)]
+	if(n == 0) return []
+	if(n >= this.length) [ ...this ]
+	if(n == 1) [ this.at(this.length - 1) ]
 
 	let array = []
-	for (let i = this.length - n; i < this.length; i++) {
+	for(let i = this.length - n; i < this.length; i++) {
 		array.push(this.at(i))
 	}
 	return array
 }
-Array.prototype.takeLastWhile = function (predicate) {
-	for (let i = this.length - 1; i >= 0; i--) {
-		if (!predicate(this.at(i))) {
+Array.prototype.takeLastWhile = function(predicate) {
+	for(let i = this.length - 1; i >= 0; i--) {
+		if(!predicate(this.at(i))) {
 			return this.drop(i + 1)
 		}
 	}
 	return []
 }
-Array.prototype.takeWhile = function (predicate) {
+Array.prototype.takeWhile = function(predicate) {
 	let array = []
-	for (let item of this) {
-		if (!predicate(item)) break
+	for(let item of this) {
+		if(!predicate(item)) break
 		array.push(item)
 	}
 	return array
 }
-Array.prototype.reverseRange = function (fromIndex, toIndex) {
+Array.prototype.reverseRange = function(fromIndex, toIndex) {
 	checkRangeIndexes(fromIndex, toIndex, this.length)
 	let midPoint = (fromIndex + toIndex) / 2
-	if (fromIndex == midPoint) return
+	if(fromIndex == midPoint) return
 	let reverseIndex = toIndex - 1
-	for (let index = fromIndex; index < midPoint; index++) {
+	for(let index = fromIndex; index < midPoint; index++) {
 		let tmp = this.at(index)
 		this[index] = this[reverseIndex]
 		this[reverseIndex] = tmp
 		reverseIndex--
 	}
 }
-Array.prototype.reversed = function () {
+Array.prototype.reversed = function() {
 	return this.copyOf().reverse()
 }
-Array.prototype.shuffle = function (rand = DefaultRandom) {
-	for (let i = this.length - 1; i >= 1; i--) {
+Array.prototype.shuffle = function(rand = DefaultRandom) {
+	for(let i = this.length - 1; i >= 1; i--) {
 		let j = rand.integer(0, i + 1)
 		let tmp = this.at(i)
 		this[i] = this[j]
 		this[j] = tmp
 	}
-}
-Array.prototype.sortBy = function (selector) {
-	if (this.length > 1) this.sortWith(compareBy(selector))
 	return this
 }
-Array.prototype.sortByDescending = function (selector) {
-	if (this.length > 1) this.sortWith(compareByDescending(selector))
+Array.prototype.sortBy = function(selector) {
+	if(this.length > 1) this.sortWith(compareBy(selector))
 	return this
 }
-Array.prototype.sorted = function () {
-	if (this.length == 0) return this
+Array.prototype.sortByDescending = function(selector) {
+	if(this.length > 1) this.sortWith(compareByDescending(selector))
+	return this
+}
+Array.prototype.sorted = function() {
+	if(this.length == 0) return this
 	return this.copyOf().sort()
 }
-Array.prototype.sortedBy = function (selector) {
+Array.prototype.sortedBy = function(selector) {
 	return this.sortedWith(compareBy(selector))
 }
-Array.prototype.sortedByDescending = function (selector) {
+Array.prototype.sortedByDescending = function(selector) {
 	return this.sortedWith(compareByDescending(selector))
 }
-Array.prototype.sortedDescending = function () {
+Array.prototype.sortedDescending = function() {
 	return this.sortedWith(ReverseOrder())
 }
-Array.prototype.sortedWith = function (comparator) {
-	if (this.length == 0) return this
+Array.prototype.sortedWith = function(comparator) {
+	if(this.length == 0) return this
 	let copy = this.copyOf()
 	copy.sortWith(comparator)
 	return copy
 }
-Array.prototype.contentDeepEquals = function (array) {
+Array.prototype.contentDeepEquals = function(array) {
 	if(this.length != array.length) return false
-	for (let i = 0; i < this.length; i++) {
-		if (this.at(i) !== array.at(i)) return false
+	for(let i = 0; i < this.length; i++) {
+		if(this.at(i) !== array.at(i)) return false
 	}
 	return true
 }
-Array.prototype.contentEquals = function (array) {
+Array.prototype.contentEquals = function(array) {
 	if(this.length != array.length) return false
-	for (let i = 0; i < this.length; i++) {
-		if (this.at(i) != array.at(i)) return false
+	for(let i = 0; i < this.length; i++) {
+		if(this.at(i) != array.at(i)) return false
 	}
 	return true
 }
-Array.prototype.copyInto = function (destination, offset = 0, startIndex = 0, endIndex = this.length) {
-	for(let i = 0; i < endIndex - startIndex; i ++) {
+Array.prototype.copyInto = function(destination, offset = 0, startIndex = 0, endIndex = this.length) {
+	for(let i = 0; i < endIndex - startIndex; i++) {
 		destination[i + offset] = this[i + startIndex]
 	}
 	return destination
 }
-Array.prototype.copyOf = function (size) {
-	if (size === undefined) {
-		return [...this]
+Array.prototype.copyOf = function(size) {
+	if(size === undefined) {
+		return [ ...this ]
 	} else {
 		let array = new Array(size)
-		for (let i = 0; i < size; i++) array[i] = this.at(i)
+		for(let i = 0; i < size; i++) array[i] = this.at(i)
 		return array
 	}
 }
-Array.prototype.copyOfRange = function (start, end) {
+Array.prototype.copyOfRange = function(start, end) {
 	let result = []
-	for (let i = start; i < end; i++) result.push(this.at(i))
+	for(let i = start; i < end; i++) result.push(this.at(i))
 	return result
 }
-Array.prototype.fill = function (value, start = 0, end = this.length) {
-	for (let i = start; i < end; i++) this[i] = value
+Array.prototype.fill = function(value, start = 0, end = this.length) {
+	for(let i = start; i < end; i++) this[i] = value
 	return this
 }
-Array.prototype.isEmpty = function () {
+Array.prototype.isEmpty = function() {
 	return this.length == 0
 }
-Array.prototype.isNotEmpty = function () {
+Array.prototype.isNotEmpty = function() {
 	return this.length > 0
 }
-Array.prototype.lastIndex = function () {
+Array.prototype.lastIndex = function() {
 	return this.length - 1
 }
 // capture the original sorter
 let originSort = Array.prototype.sort
-Array.prototype.sort = function (comparator) {
+Array.prototype.sort = function(comparator) {
 	// change the comparator logic if it is not provided.
 	// this can fix the sorting problem in TS, but may broke some scripts.
 	// You can disable this feature later.
 	// TODO: Add feature to disable this
-	if (comparator === undefined) {
+	if(comparator === undefined) {
 		comparator = NaturalOrder()
 	}
 	return originSort.call(this, comparator)
 }
-Array.prototype.sortDescending = function (comparator, fromIndex = 0, toIndex = this.length) {
+Array.prototype.sortDescending = function(comparator, fromIndex = 0, toIndex = this.length) {
 	// reverse the comparator
 	if(comparator === undefined) {
 		comparator = ReverseOrder()
@@ -404,7 +405,7 @@ Array.prototype.sortDescending = function (comparator, fromIndex = 0, toIndex = 
 	return this.sortWith(comparator, fromIndex, toIndex)
 }
 Array.prototype.sortWith = function(comparator, fromIndex = 0, toIndex = this.length) {
-	if (comparator === undefined) {
+	if(comparator === undefined) {
 		comparator = NaturalOrder()
 	}
 	if(fromIndex == 0 && toIndex == this.length) {
@@ -419,33 +420,133 @@ Array.prototype.sortWith = function(comparator, fromIndex = 0, toIndex = this.le
 	}
 	return this
 }
-Array.prototype.associate = function (transform) {
+Array.prototype.associate = function(transform) {
 	return this.associateTo(new Map(), transform)
 }
-Array.prototype.associateBy = function (keySelector) {
+Array.prototype.associateBy = function(keySelector) {
 	return this.associateByTo(new Map(), keySelector)
 }
-Array.prototype.associateByTo = function (destination, keySelector) {
+Array.prototype.associateByTo = function(destination, keySelector) {
 	for(let el of this) {
 		destination.set(keySelector(el), el)
 	}
 	return destination
 }
-Array.prototype.associateTo = function (destination, transform) {
+Array.prototype.associateTo = function(destination, transform) {
 	for(let el of this) {
-		let [key, value] = transform(el)
+		let [ key, value ] = transform(el)
 		destination.set(key, value)
 	}
 	return destination
 }
-Array.prototype.associateWith = function (transform) {
+Array.prototype.associateWith = function(transform) {
 	return this.associateWithTo(new Map(), transform)
 }
-Array.prototype.associateWithTo = function (destination, transform) {
+Array.prototype.associateWithTo = function(destination, transform) {
 	for(let el of this) {
 		destination.set(el, transform(el))
 	}
 	return destination
+}
+Array.prototype.toSet = function() {
+	return new Set(this)
+}
+Array.prototype.flatMapTo = function(destination, transform) {
+	for(let el of this) {
+		let list = transform(el)
+		destination.push(...list)
+	}
+	return destination
+}
+Array.prototype.groupBy = function(keySelector, valueSelector) {
+	return this.groupByTo(new Map(), keySelector, valueSelector)
+}
+Array.prototype.groupByTo = function(destination, keySelector, valueSelector) {
+	for(let el of this) {
+		let key = keySelector(el)
+		// TODO: use getOrPut instead when available
+		if(!destination.has(key)) {
+			destination.set(key, [])
+		}
+		let valueArr = destination.get(key) || []
+
+		let value = valueSelector ? valueSelector(el) : el
+		valueArr.push(value)
+	}
+	return destination
+}
+Array.prototype.groupingBy = function <K>(keySelector) {
+	let self = this
+
+	class GroupingImpl extends Grouping<unknown, K> {
+		sourceIterator(): IterableIterator<unknown> {
+			return self
+		}
+
+		keyOf(element: unknown): K {
+			return keySelector(element)
+		}
+	}
+
+	return new GroupingImpl()
+}
+Array.prototype.mapNotNull = function(transform = ((x) => x)) {
+	return this.mapNotNullTo([], transform)
+}
+Array.prototype.mapNotNullTo = function(destination, transform = ((x) => x)) {
+	this.forEach(el => {
+		let value = transform(el)
+		if(value != null) {
+			destination.push(value)
+		}
+	})
+	return destination
+}
+Array.prototype.mapTo = function(destination, transform) {
+	for(let el of this) {
+		destination.push(transform(el))
+	}
+	return destination
+}
+// modified
+Array.prototype.withIndex = function() {
+	return this.map((value, index) => [ index, value ])
+}
+Array.prototype.distinct = function() {
+	return [ ...this.toSet() ]
+}
+Array.prototype.distinctBy = function(selector) {
+	let set = new Set()
+	let arr = []
+	for(let el of this) {
+		let key = selector(el)
+		if(!set.has(key)) {
+			set.add(key)
+			arr.push(el)
+		}
+	}
+	return arr
+}
+Array.prototype.intersect = function(other) {
+	let set = this.toSet()
+	for(let el of other) {
+		set.add(el)
+	}
+	return set
+}
+Array.prototype.subtract = function(other) {
+	let set = this.toSet()
+	for(let el of other) {
+		set.delete(el)
+	}
+	return set
+}
+Array.prototype.union = function(other) {
+	let set = this.toSet()
+	for(let el of other) {
+		set.add(el)
+	}
+	return set
 }
 export {}
 
@@ -457,7 +558,7 @@ function isInBound<T>(array: Array<T>, index: number) {
 
 function forEachBackwards<T>(array: Array<T>, block: (element: T) => void) {
 	let length = array.length
-	for (let i = length - 1; i >= 0; i--) {
+	for(let i = length - 1; i >= 0; i--) {
 		let element = array.at(i)
 		block(element)
 	}
@@ -470,14 +571,14 @@ function isIndicesEmpty(start: number, endInclusive: number) {
 function checkRangeIndexes(
 	fromIndex: number,
 	toIndex: number,
-	size: number
+	size: number,
 ): void | never {
-	if (fromIndex < 0 || toIndex > size) {
+	if(fromIndex < 0 || toIndex > size) {
 		throw new Error(
-			`fromIndex: ${fromIndex}, toIndex: ${toIndex}, size: ${size}`
+			`fromIndex: ${ fromIndex }, toIndex: ${ toIndex }, size: ${ size }`,
 		)
 	}
-	if (fromIndex > toIndex) {
-		throw new Error(`fromIndex: ${fromIndex} > toIndex: ${toIndex}`)
+	if(fromIndex > toIndex) {
+		throw new Error(`fromIndex: ${ fromIndex } > toIndex: ${ toIndex }`)
 	}
 }

@@ -1,6 +1,7 @@
-// extends Comparable
+import { makeComparable } from "../utils/comparable"
+
 Number.prototype.compareTo = function(other) {
-    return this == other ? 0 : this > other ? 1 : -1
+    return makeComparable(this).compareTo(makeComparable(other))
 }
 
 Number.prototype.coerceAtLeast = function(minimumValue) {
