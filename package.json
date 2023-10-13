@@ -30,7 +30,10 @@
 	"license": "MIT",
 	"type": "commonjs",
 	"homepage": "https://github.com/taskeren/typescript-kotlin-extensions",
-	"repository": "github:taskeren/typescript-kotlin-extensions",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/taskeren/typescript-kotlin-extensions.git"
+	},
 	"bugs": {
 		"url": "https://github.com/taskeren/typescript-kotlin-extensions/issues"
 	},
