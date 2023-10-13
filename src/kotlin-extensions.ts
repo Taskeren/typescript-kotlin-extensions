@@ -11,6 +11,7 @@ export * from "./utils/generators"
 export * from "./numbers/numbers"
 export * from "./utils/predicate"
 export * from "./utils/transform"
+export * from "./exceptions/NoSuchElementError"
 
 declare global {
 	interface Array<T> {
@@ -61,7 +62,7 @@ declare global {
 		takeLast(count: number): Array<T>
 		takeLastWhile(predicate: Predicate<T>): Array<T>
 		takeWhile(predicate: Predicate<T>): Array<T>
-		// reverse: JS has its standard implementation, and exact same with the KT's
+		// reverse: JS has its standard implementation, and exact same with the Kotlin's
 		// reverse(Int, Int): unable to use the same name for a function, so renamed to reverseRange
 		reverseRange(fromIndex: number, toIndex: number): void
 		reversed(): Array<T>
@@ -73,7 +74,7 @@ declare global {
 		sortByDescending<R extends Comparable<R>>(
 			selector: TransformComparable<T, R>
 		): this
-		// sortDescending: definition extened below
+		// sortDescending: definition extended below
 		sorted(): Array<T>
 		// sortedArray: skipped because there is no difference between sorted and sortedArray
 		// sortedArrayDescending: skipped because there is no difference between sortedDescending and sortedArrayDescending
@@ -107,6 +108,12 @@ declare global {
 		 * @param comparator the comparator
 		 */
 		sort(comparator?: Comparator<T>): this
+
+		/**
+		 * Original JavaScript sorting function.
+		 * @see Array.prototype.sort
+		 */
+		sort_javascript(compareFn?: (a: T, b: T) => number): this
         sortDescending(comparator?: Comparator<T>, fromIndex?: number, toIndex?: number): this
         sortWith(comparator: Comparator<T>, fromIndex?: number, toIndex?: number): this
 		// toBooleanArray, toByteArray, toCharArray, toDoubleArray, toFloatArray, toIntArray, toLongArray, toShortArray, toTypedArray: skipped
@@ -144,6 +151,22 @@ declare global {
 		firstTruthyOf<R>(transform: Transform<T, R>): R | undefined
 		firstTruthyOfOrNull<R>(transform: Transform<T, R>): R | null
 		/* end */
+
+		all(predicate: Predicate<T>): boolean
+		any(predicate?: Predicate<T>): boolean
+		count(predicate?: Predicate<T>): number
+		fold<R>(initial: R, operation: (accumulator: R, element: T) => R): R
+		foldIndexed<R>(initial: R, operation: (index: number, accumulator: R, element: T) => R): R
+		foldRight<R>(initial: R, operation: (accumulator: R, element: T) => R): R
+		foldRightIndexed<R>(initial: R, operation: (index: number, accumulator: R, element: T) => R): R
+		// forEach: skipped
+		forEachIndexed(action: (index: number, element: T) => void): void
+		max(): T | never
+		maxBy<R>(selector: Transform<T, R>): T | never
+		maxByOrNull<R>(selector: Transform<T, R>): T | null
+		maxOf(selector: TransformComparable<T, number>): number | never
+		maxOfOrNull(selector: TransformComparable<T, number>): number | null
+
 	}
 
 	interface Number {

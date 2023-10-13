@@ -1,7 +1,8 @@
-import { Random } from "random-js"
+import {Random} from "random-js"
 import "../kotlin-extensions"
-import { compareBy, compareByDescending, getReversedComparator, NaturalOrder, ReverseOrder } from "../utils/comparable"
-import { Grouping } from "../utils/grouping"
+import {compareBy, compareByDescending, getReversedComparator, NaturalOrder, ReverseOrder} from "../utils/comparable"
+import {Grouping} from "../utils/grouping"
+import {NoSuchElementError} from "../exceptions/NoSuchElementError";
 
 const DefaultRandom = new Random()
 
@@ -177,12 +178,12 @@ Array.prototype.singleOrNull = function(predicate) {
 }
 Array.prototype.drop = function(n) {
 	if(n < 0)
-		throw new Error(`Requested element count ${ n } is less than zero.`)
+		throw new Error(`Requested element count ${n} is less than zero.`)
 	return this.takeLast((this.length - n).coerceAtLeast(0))
 }
 Array.prototype.dropLast = function(n) {
 	if(n < 0)
-		throw new Error(`Requested element count ${ n } is less than zero.`)
+		throw new Error(`Requested element count ${n} is less than zero.`)
 	return this.take((this.length - n).coerceAtLeast(0))
 }
 Array.prototype.dropLastWhile = function(predicate) {
@@ -241,11 +242,11 @@ Array.prototype.sliceIndices = function(indices) {
 }
 Array.prototype.take = function(n) {
 	if(n < 0)
-		throw new Error(`Requested element count ${ n } is less than zero.`)
+		throw new Error(`Requested element count ${n} is less than zero.`)
 
 	if(n == 0) return []
-	if(n >= this.length) [ ...this ]
-	if(n == 1) return [ this.at(0) ]
+	if(n >= this.length) return [...this]
+	if(n == 1) return [this.at(0)]
 
 	let count = 0
 	let array = []
@@ -257,11 +258,11 @@ Array.prototype.take = function(n) {
 }
 Array.prototype.takeLast = function(n) {
 	if(n < 0)
-		throw new Error(`Requested element count ${ n } is less than zero.`)
+		throw new Error(`Requested element count ${n} is less than zero.`)
 
 	if(n == 0) return []
-	if(n >= this.length) [ ...this ]
-	if(n == 1) [ this.at(this.length - 1) ]
+	if(n >= this.length) return [...this]
+	if(n == 1) return [this.at(this.length - 1)]
 
 	let array = []
 	for(let i = this.length - n; i < this.length; i++) {
@@ -358,7 +359,7 @@ Array.prototype.copyInto = function(destination, offset = 0, startIndex = 0, end
 }
 Array.prototype.copyOf = function(size) {
 	if(size === undefined) {
-		return [ ...this ]
+		return [...this]
 	} else {
 		let array = new Array(size)
 		for(let i = 0; i < size; i++) array[i] = this.at(i)
@@ -394,6 +395,9 @@ Array.prototype.sort = function(comparator) {
 		comparator = NaturalOrder()
 	}
 	return originSort.call(this, comparator)
+}
+Array.prototype.sort_javascript = function(compareFn) {
+	return originSort.call(this, compareFn)
 }
 Array.prototype.sortDescending = function(comparator, fromIndex = 0, toIndex = this.length) {
 	// reverse the comparator
@@ -434,7 +438,7 @@ Array.prototype.associateByTo = function(destination, keySelector) {
 }
 Array.prototype.associateTo = function(destination, transform) {
 	for(let el of this) {
-		let [ key, value ] = transform(el)
+		let [key, value] = transform(el)
 		destination.set(key, value)
 	}
 	return destination
@@ -510,10 +514,10 @@ Array.prototype.mapTo = function(destination, transform) {
 }
 // modified
 Array.prototype.withIndex = function() {
-	return this.map((value, index) => [ index, value ])
+	return this.map((value, index) => [index, value])
 }
 Array.prototype.distinct = function() {
-	return [ ...this.toSet() ]
+	return [...this.toSet()]
 }
 Array.prototype.distinctBy = function(selector) {
 	let set = new Set()
@@ -548,6 +552,99 @@ Array.prototype.union = function(other) {
 	}
 	return set
 }
+Array.prototype.all = function(predicate) {
+	for(let el of this) {
+		if(!predicate(el)) return false
+	}
+	return true
+}
+Array.prototype.any = function(predicate) {
+	if(predicate === undefined) {
+		return this.length > 0
+	}
+	for(let el of this) {
+		if(predicate(el)) return true
+	}
+	return false
+}
+Array.prototype.count = function(predicate) {
+	if(predicate === undefined) {
+		return this.length
+	}
+	let count = 0
+	for(let el of this) {
+		if(predicate(el)) count++
+	}
+	return count
+}
+Array.prototype.fold = function(initial, operation) {
+	for(let el of this) {
+		initial = operation(initial, el)
+	}
+	return initial
+}
+Array.prototype.foldIndexed = function(initial, operation) {
+	let index = 0
+	for(let el of this) {
+		initial = operation(index++, initial, el)
+	}
+	return initial
+}
+Array.prototype.foldRight = function(initial, operation) {
+	for(let i = this.length - 1; i >= 0; i--) {
+		initial = operation(initial, this.at(i))
+	}
+	return initial
+}
+Array.prototype.foldRightIndexed = function(initial, operation) {
+	for(let i = this.length - 1; i >= 0; i--) {
+		initial = operation(i, initial, this.at(i))
+	}
+	return initial
+}
+Array.prototype.forEachIndexed = function(action) {
+	this.forEach((value, index) => action(index, value))
+}
+Array.prototype.max = function() {
+	if(this.length == 0) throw new NoSuchElementError()
+	let max = this.at(0)
+	for(let i = 1; i < this.length; i++) {
+		let el = this.at(i)
+		if(el > max) max = el
+	}
+	return max
+}
+Array.prototype.maxBy = function(selector) {
+	if(this.length == 0) throw new NoSuchElementError()
+	let max = this.at(0)
+	let maxValue = selector(max)
+	for(let i = 1; i < this.length; i++) {
+		let el = this.at(i)
+		let value = selector(el)
+		if(value > maxValue) {
+			max = el
+			maxValue = value
+		}
+	}
+	return max
+}
+Array.prototype.maxByOrNull = function(selector) {
+	if(this.length == 0) return null
+	return this.maxBy(selector)
+}
+Array.prototype.maxOf = function(selector) {
+	if(this.length == 0) throw new NoSuchElementError()
+	let max = selector(this.at(0))
+	for(let i = 1; i < this.length; i++) {
+		let value = selector(this.at(i))
+		if(value > max) max = value
+	}
+	return max
+}
+Array.prototype.maxOfOrNull = function(selector) {
+	if(this.length == 0) return null
+	return this.maxOf(selector)
+}
 export {}
 
 // helpers
@@ -575,10 +672,10 @@ function checkRangeIndexes(
 ): void | never {
 	if(fromIndex < 0 || toIndex > size) {
 		throw new Error(
-			`fromIndex: ${ fromIndex }, toIndex: ${ toIndex }, size: ${ size }`,
+			`fromIndex: ${fromIndex}, toIndex: ${toIndex}, size: ${size}`,
 		)
 	}
 	if(fromIndex > toIndex) {
-		throw new Error(`fromIndex: ${ fromIndex } > toIndex: ${ toIndex }`)
+		throw new Error(`fromIndex: ${fromIndex} > toIndex: ${toIndex}`)
 	}
 }
